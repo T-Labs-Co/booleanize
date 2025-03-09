@@ -21,5 +21,66 @@
  */
 // config for TLabsCo/Booleanize
 return [
-
+    /*
+     * this configuration will set auto-couple mapping for boolean value when you call convert
+     * Ex:
+     * 'default' => [
+            'true' => 'y',
+            'false' => 'n'
+        ],
+     *  then you call convert with TRUE value will return 'y' and same for FALSE will return 'n'
+     */
+    'default' => [
+        'true' => true,
+        'false' => false,
+    ],
+    'values' => [
+        'true' => [
+            'y',
+            'yes',
+            'active',
+            'enable',
+            'on',
+            '1',
+            'true',
+            1,
+            true,
+        ],
+        'false' => [
+            'n',
+            'no',
+            'inactive',
+            'disable',
+            'off',
+            '0',
+            'false',
+            0,
+            false,
+        ],
+        'map' => [
+            ['y' => 'n'],
+            ['yes' => 'no'],
+            ['active' => 'inactive'],
+            ['enable' => 'disable'],
+            ['on' => 'off'],
+            ['1' => '0'],
+            ['true' => 'false'],
+            [1 => 0],
+            [true => false],
+        ],
+        'human' => [
+            'true' => ['Yes, I agree'],
+            'false' => ['No, I don\'t'],
+            'unknown' => ['Yes or No depend on your mind'],
+        ],
+    ],
+    'types' => [
+        'allow' => ['boolean', 'integer', 'double', 'string', 'array', 'object', 'NULL'],
+        'null_as' => false,
+        'object_as' => true,
+        'object_empty_as' => false,
+        'array_as' => true,
+        'array_empty_as' => false,
+        'other_as' => 'exception',
+    ],
 ];

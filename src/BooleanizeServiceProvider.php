@@ -40,4 +40,17 @@ class BooleanizeServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasCommand(BooleanizeCommand::class);
     }
+
+    public function packageRegistered()
+    {
+        $this->app->singleton('booleanize', function () {
+            return new Booleanize;
+        });
+    }
+
+    public function packageBooted()
+    {
+        // Override config
+
+    }
 }
