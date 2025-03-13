@@ -53,11 +53,28 @@ final class Booleanize
 
         $couple = $this->couple($trueValue ?? $this->defaultTrue());
 
-        if ($this->isTrue($value)) {
+        if ($this->fixCouple($trueValue) && is_numeric($trueValue) && $this->isTrue($value)) {
+            // fix value
+            return 1;
+        }
+        if ($this->fixCouple($trueValue) && is_bool($trueValue) && $this->isTrue($value)) {
+            // fix value
+            return true;
+        }
+        if ($this->fixCouple($trueValue) && is_numeric($trueValue) && $this->isFalse($value)) {
+            // fix value
+            return 0;
+        }
+        if ($this->fixCouple($trueValue) && is_bool($trueValue) && $this->isFalse($value)) {
+            // fix value
+            return false;
+        }
+
+        if ($couple && $this->isTrue($value)) {
             return array_key_first($couple);
         }
 
-        if ($this->isFalse($value)) {
+        if ($couple && $this->isFalse($value)) {
             return $couple[array_key_first($couple)];
         }
 
@@ -85,11 +102,28 @@ final class Booleanize
 
         $couple = $this->couple($trueValue ?? $this->defaultTrue());
 
-        if ($this->isFalse($value)) {
+        if ($this->fixCouple($trueValue) && is_numeric($trueValue) && $this->isTrue($value)) {
+            // fix value
+            return 0;
+        }
+        if ($this->fixCouple($trueValue) && is_bool($trueValue) && $this->isTrue($value)) {
+            // fix value
+            return false;
+        }
+        if ($this->fixCouple($trueValue) && is_numeric($trueValue) && $this->isFalse($value)) {
+            // fix value
+            return 1;
+        }
+        if ($this->fixCouple($trueValue) && is_bool($trueValue) && $this->isFalse($value)) {
+            // fix value
+            return true;
+        }
+
+        if ($couple && $this->isFalse($value)) {
             return array_key_first($couple);
         }
 
-        if ($this->isTrue($value)) {
+        if ($couple && $this->isTrue($value)) {
             return $couple[array_key_first($couple)];
         }
 
@@ -179,13 +213,34 @@ final class Booleanize
         return Arr::random($this->valuesHuman()['unknown']);
     }
 
+    private function fixCouple($value)
+    {
+        if ($value === true || $value === false) {
+            return [true => false];
+        }
+        if ($value === 1 || $value === 0) {
+            return [1 => 0];
+        }
+        if ($value === '1' || $value === '0') {
+            return [1 => 0];
+        }
+
+        return null;
+    }
+
     public function couple($value)
     {
         $value = $this->clean($value);
 
-        foreach ($this->valuesMap() as $true => $false) {
-            if ($true === $value || $false === $value) {
-                return [$true => $false];
+        $fixCouple = $this->fixCouple($value);
+
+        if ($fixCouple) {
+            return $fixCouple;
+        }
+
+        foreach ($this->valuesMap() as $couple) {
+            if (array_key_first($couple) === $value || $couple[array_key_first($couple)] === $value) {
+                return $couple;
             }
         }
 

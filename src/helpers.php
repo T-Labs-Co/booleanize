@@ -37,7 +37,7 @@ if (! function_exists('booleanize')) {
             return app('booleanize')->convertArray($value, $default, $trueValue);
         }
 
-        if (! empty($value)) {
+        if ($value !== null) {
             return app('booleanize')->convert($value, $default, $trueValue);
         }
 

@@ -20,9 +20,12 @@
  * file that was distributed with this source code.
  */
 
-namespace TLabsCo\Booleanize\Casts;
+namespace TLabsCo\Booleanize;
 
-trait HasBooleanizeCastTrait
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
+
+trait HasBooleanizeTrait
 {
     public function getTrueValueAs(): array
     {
@@ -34,5 +37,22 @@ trait HasBooleanizeCastTrait
     {
         // config your default true value for your attribute when SET
         return [];
+    }
+
+    /**
+     * @param  Builder|\Illuminate\Database\Query\Builder  $builder
+     * @param  string  $field
+     * @param  mixed  $value
+     * @return Builder|\Illuminate\Database\Query\Builder
+     */
+    public function scopeWhereBooleanize($builder, $field, $value)
+    {
+        $defaultTrue = Arr::get($this->setTrueValueAs(), $field, booleanize()->defaultTrue());
+
+        if ($value === null) {
+            return $builder->whereNull($field);
+        }
+
+        return $builder->where($field, booleanize($value, null, $defaultTrue));
     }
 }

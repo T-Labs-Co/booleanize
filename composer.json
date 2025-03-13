@@ -37,7 +37,10 @@
         "psr-4": {
             "TLabsCo\\Booleanize\\": "src/",
             "TLabsCo\\Booleanize\\Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

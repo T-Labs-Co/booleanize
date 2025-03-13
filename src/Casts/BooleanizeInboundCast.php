@@ -25,16 +25,16 @@ namespace TLabsCo\Booleanize\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
 use Illuminate\Support\Arr;
 use TLabsCo\Booleanize\Facades\Booleanize;
+use TLabsCo\Booleanize\HasBooleanizeTrait;
 
 final class BooleanizeInboundCast implements CastsInboundAttributes
 {
     /**
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return bool
      */
     private function hasUseBooleanize($model): bool
     {
-        return in_array(HasBooleanizeCastTrait::class, class_uses_recursive(get_class($model)));
+        return in_array(HasBooleanizeTrait::class, class_uses_recursive(get_class($model)));
     }
 
     /**

@@ -25,6 +25,7 @@ namespace TLabsCo\Booleanize\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Arr;
 use TLabsCo\Booleanize\Facades\Booleanize;
+use TLabsCo\Booleanize\HasBooleanizeTrait;
 
 final class BooleanizeCast implements CastsAttributes
 {
@@ -32,9 +33,9 @@ final class BooleanizeCast implements CastsAttributes
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return bool
      */
-    private function hasUseBooleanize($model)
+    private function hasUseBooleanizeTrait($model)
     {
-        return in_array(HasBooleanizeCastTrait::class, class_uses_recursive(get_class($model)));
+        return in_array(HasBooleanizeTrait::class, class_uses_recursive(get_class($model)));
     }
 
     /**
@@ -48,7 +49,7 @@ final class BooleanizeCast implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
-        if ($this->hasUseBooleanize($model)) {
+        if ($this->hasUseBooleanizeTrait($model)) {
             $defaultTrue = Arr::get($model->getTrueValueAs(), $key, Booleanize::defaultTrue());
         } else {
             $defaultTrue = Booleanize::defaultTrue();
@@ -68,7 +69,7 @@ final class BooleanizeCast implements CastsAttributes
      */
     public function set($model, $key, $value, $attributes)
     {
-        if ($this->hasUseBooleanize($model)) {
+        if ($this->hasUseBooleanizeTrait($model)) {
             $defaultTrue = Arr::get($model->setTrueValueAs(), $key, Booleanize::defaultTrue());
         } else {
             $defaultTrue = Booleanize::defaultTrue();

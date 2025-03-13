@@ -45,6 +45,8 @@ return [
             'true',
             1,
             true,
+            'good',
+            'ok',
         ],
         'false' => [
             'n',
@@ -56,6 +58,8 @@ return [
             'false',
             0,
             false,
+            'bad',
+            'not_ok',
         ],
         'map' => [
             ['y' => 'n'],
@@ -63,10 +67,11 @@ return [
             ['active' => 'inactive'],
             ['enable' => 'disable'],
             ['on' => 'off'],
-            ['1' => '0'],
+            // NOTE: can not config for fixed couple - PHP array index bool auto casting
+            // ['1' => '0'], [1 => 0], [true => false],
             ['true' => 'false'],
-            [1 => 0],
-            [true => false],
+            ['good' => 'bad'],
+            ['ok' => 'not_ok'],
         ],
         'human' => [
             'true' => ['Yes, I agree'],
