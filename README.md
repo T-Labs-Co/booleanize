@@ -1,4 +1,4 @@
-# Helper to work with Boolean in less pain
+# Helper to work with Boolean in less pain way
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/t-labs-co/booleanize.svg?style=flat-square)](https://packagist.org/packages/t-labs-co/booleanize)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/t-labs-co/booleanize/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/t-labs-co/booleanize/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -54,6 +54,8 @@ return [
 - Check input value is `true` or `false` 
 - Convert input value to desired Boolean form 
 - Cast model attribute to correct value 
+- Query boolean field
+- Validate rule for boolean field 
 
 ## Usage
 
@@ -69,6 +71,67 @@ booleanize()->convert('Yes', null, 1); // OUTPUT: 1
 
 booleanize()->convert('No', null, true); // OUTPUT: false 
 booleanize()->convert('No', null, 1); // OUTPUT: 0 
+```
+
+#### Using in Model class
+
+```php
+// model class 
+
+class User extends Authenticatable
+{
+    use HasBooleanizeTrait;
+    
+    // cast using 
+    protected function casts(): array
+    {
+        return [
+            'agreed' => BooleanizeCast::class
+        ];
+    }
+    
+    // setting cast type SET and GET
+    public function getTrueValueAs(): array
+    {
+        // config your default true value for your attribute when GET
+        return [
+            'agreed' => 1
+        ];
+    }
+    
+    public function setTrueValueAs(): array
+    {
+        // config your default true value for your attribute when SET
+        return [
+            'agreed' => 'yes'
+        ];
+    }
+}
+
+// query Scope using  whereBooleanize()
+$users = User::whereBooleanize('agreed', true)->get(); 
+// this will auto convert `true` to `yes` value from `setTrueValueAs()` and do query
+
+// Or shorter 
+$users = User::whereBooleanizeTrue('agreed')->get();
+```
+
+#### Using in validate
+
+```php
+
+$data = [
+    'term_confirm' => 'Y'
+];
+// term_confirm could be any in [y,yes,1,true]
+$rules = [
+    'term_confirm' => ['required', new BooleanizeTrueRule()],
+];
+
+Validator::validate($data, $rules, [
+    'term_confirm' => 'Must confirm the term'
+]);
+
 ```
 
 ## Testing

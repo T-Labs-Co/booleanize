@@ -28,13 +28,13 @@ use Illuminate\Contracts\Validation\ValidationRule;
 /**
  * Usage:
  * ```php
- * // it may be Y, Yes, No, N, true, false
+ * // it may be Y, Yes, true
  * $request->validate([
-        'term_confirm' => ['required', new BooleanizeRule],
+        'term_confirm' => ['required', new BooleanizeTrueRule],
     ]);
  * ```
  */
-class BooleanizeRule implements ValidationRule
+class BooleanizeTrueRule implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -45,7 +45,7 @@ class BooleanizeRule implements ValidationRule
     {
         // Check booleanize
         try {
-            if (! booleanize()->isValid($value)) {
+            if (! booleanize()->isValid($value) || ! booleanize()->isTrue($value)) {
                 $fail($this->message());
             }
         } catch (\Exception $e) {
@@ -60,8 +60,7 @@ class BooleanizeRule implements ValidationRule
      */
     public function message()
     {
-        return 'The :attribute must be a booleanize value. Maybe: '
-            .implode(',', array_unique(booleanize()->valuesTrue())).' as True. '
-            .implode(',', array_unique(booleanize()->valuesFalse())).' as False.';
+        return 'The :attribute must be a booleanize True value. Maybe: '
+            .implode(',', array_unique(booleanize()->valuesTrue()));
     }
 }

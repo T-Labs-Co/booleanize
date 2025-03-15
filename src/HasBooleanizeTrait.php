@@ -55,4 +55,24 @@ trait HasBooleanizeTrait
 
         return $builder->where($field, booleanize($value, null, $defaultTrue));
     }
+
+    /**
+     * @param  Builder|\Illuminate\Database\Query\Builder  $builder
+     * @param  string  $field
+     * @return Builder|\Illuminate\Database\Query\Builder
+     */
+    public function scopeWhereBooleanizeTrue($builder, $field)
+    {
+        return self::whereBooleanize($field, true);
+    }
+
+    /**
+     * @param  Builder|\Illuminate\Database\Query\Builder  $builder
+     * @param  string  $field
+     * @return Builder|\Illuminate\Database\Query\Builder
+     */
+    public function scopeWhereBooleanizeFalse($builder, $field)
+    {
+        return self::whereBooleanize($field, false);
+    }
 }

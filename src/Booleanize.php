@@ -277,12 +277,12 @@ final class Booleanize
         return Arr::get($this->config, 'default.false');
     }
 
-    private function valuesTrue()
+    public function valuesTrue()
     {
         return Arr::get($this->config, 'values.true');
     }
 
-    private function valuesFalse()
+    public function valuesFalse()
     {
         return Arr::get($this->config, 'values.false');
     }
