@@ -1,5 +1,6 @@
 {
     "name": "t-labs-co/booleanize",
+    "version": "1.0.0",
     "description": "Tools for easier boolean manipulation.",
     "keywords": [
         "T.Labs & Co.",
