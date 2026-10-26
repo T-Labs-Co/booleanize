@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+use TLabsCo\Booleanize\Booleanize;
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -29,7 +32,7 @@ if (! function_exists('booleanize')) {
      * @param  array<string, mixed>|string|null  $value
      * @param  mixed  $default
      * @param  string|bool  $trueValue
-     * @return \TLabsCo\Booleanize\Booleanize|mixed
+     * @return Booleanize|mixed
      */
     function booleanize($value = null, $default = null, $trueValue = null)
     {
