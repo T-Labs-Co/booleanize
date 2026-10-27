@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -29,21 +31,28 @@ use TLabsCo\Booleanize\Exceptions\InvalidValueBooleanizeException;
 
 final class Booleanize
 {
-    private $config = [];
+    /** @var array<string, mixed> */
+    private array $config = [];
 
-    public function __construct($options = [])
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    public function __construct(array $options = [])
     {
         $this->config = array_merge_recursive(config('booleanize'), $options);
     }
 
-    public function withConfig($options)
+    /**
+     * @param  array<string, mixed>  $options
+     */
+    public function withConfig(array $options): self
     {
         $this->config = array_merge_recursive($this->config, $options);
 
         return $this;
     }
 
-    public function convert($value, $default = null, $trueValue = null)
+    public function convert(mixed $value, mixed $default = null, mixed $trueValue = null): mixed
     {
         $this->canConvert($value, true);
 
@@ -71,17 +80,31 @@ final class Booleanize
         }
 
         if ($couple && $this->isTrue($value)) {
+            // Handle PHP boolean key coercion: [true => false] becomes [1 => false]
+            if (array_key_first($couple) === 1 && $couple[1] === false) {
+                return true;
+            }
+
             return array_key_first($couple);
         }
 
         if ($couple && $this->isFalse($value)) {
+            // Handle PHP boolean key coercion: [true => false] becomes [1 => false]
+            if (array_key_first($couple) === 1 && $couple[1] === false) {
+                return false;
+            }
+
             return $couple[array_key_first($couple)];
         }
 
         return $default;
     }
 
-    public function convertArray($values, $default = null, $trueValue = null)
+    /**
+     * @param  array<string, mixed>  $values
+     * @return array<string, mixed>
+     */
+    public function convertArray(array $values, mixed $default = null, mixed $trueValue = null): array
     {
         $convertValues = [];
 
@@ -92,7 +115,7 @@ final class Booleanize
         return $convertValues;
     }
 
-    public function inverse($value, $default = null, $trueValue = null)
+    public function inverse(mixed $value, mixed $default = null, mixed $trueValue = null): mixed
     {
         $this->canConvert($value, true);
 
@@ -120,10 +143,20 @@ final class Booleanize
         }
 
         if ($couple && $this->isFalse($value)) {
+            // Handle PHP boolean key coercion: [true => false] becomes [1 => false]
+            if (array_key_first($couple) === 1 && $couple[1] === false) {
+                return true;
+            }
+
             return array_key_first($couple);
         }
 
         if ($couple && $this->isTrue($value)) {
+            // Handle PHP boolean key coercion: [true => false] becomes [1 => false]
+            if (array_key_first($couple) === 1 && $couple[1] === false) {
+                return false;
+            }
+
             return $couple[array_key_first($couple)];
         }
 
@@ -131,18 +164,20 @@ final class Booleanize
         return $default;
     }
 
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         if ($this->isTrue($value) || $this->isFalse($value)) {
             return true;
         }
 
-        throw_if($this->otherAsException(), new InvalidValueBooleanizeException);
+        if ($this->otherAsException()) {
+            throw new InvalidValueBooleanizeException;
+        }
 
-        return $this->otherAs();
+        return (bool) $this->otherAs();
     }
 
-    public function isTrue($value)
+    public function isTrue(mixed $value): bool
     {
         $this->canConvert($value, true);
 
@@ -152,7 +187,7 @@ final class Booleanize
             return $this->nullAs();
         }
 
-        if (is_object($value) && $value == new \stdClass) {
+        if (is_object($value) && (array) $value === []) {
             return $this->objectEmptyAs();
         }
 
@@ -171,7 +206,7 @@ final class Booleanize
         return in_array($value, $this->valuesTrue(), true);
     }
 
-    public function isFalse($value)
+    public function isFalse(mixed $value): bool
     {
         $this->canConvert($value, true);
 
@@ -181,7 +216,7 @@ final class Booleanize
             return true;
         }
 
-        if (is_object($value) && $value == new \stdClass && $this->objectEmptyAs() === false) {
+        if (is_object($value) && (array) $value === [] && $this->objectEmptyAs() === false) {
             return true;
         }
 
@@ -200,7 +235,7 @@ final class Booleanize
         return in_array($value, $this->valuesFalse(), true);
     }
 
-    public function human($value)
+    public function human(mixed $value): string
     {
         if ($this->isTrue($value)) {
             return Arr::random($this->valuesHuman()['true']);
@@ -213,7 +248,10 @@ final class Booleanize
         return Arr::random($this->valuesHuman()['unknown']);
     }
 
-    private function fixCouple($value)
+    /**
+     * @return array<int, bool>|array<int, int>|null
+     */
+    private function fixCouple(mixed $value): ?array
     {
         if ($value === true || $value === false) {
             return [true => false];
@@ -228,7 +266,10 @@ final class Booleanize
         return null;
     }
 
-    public function couple($value)
+    /**
+     * @return array<int|string, bool|string|int>|null
+     */
+    public function couple(mixed $value): ?array
     {
         $value = $this->clean($value);
 
@@ -247,12 +288,14 @@ final class Booleanize
         return null;
     }
 
-    private function canConvert($value, $throwUnsupportException = false)
+    private function canConvert(mixed $value, bool $throwUnsupportException = false): bool
     {
         $type = gettype($value);
 
         if (! in_array($type, $this->allowTypes(), true)) {
-            throw_if($throwUnsupportException, new InvalidTypeSupportBooleanizeException);
+            if ($throwUnsupportException) {
+                throw new InvalidTypeSupportBooleanizeException;
+            }
 
             return false;
         }
@@ -267,72 +310,87 @@ final class Booleanize
         return is_string($value) ? Str::lower(Str::trim($value)) : $value;
     }
 
-    public function defaultTrue()
+    public function defaultTrue(): mixed
     {
         return Arr::get($this->config, 'default.true');
     }
 
-    public function defaultFalse()
+    public function defaultFalse(): mixed
     {
         return Arr::get($this->config, 'default.false');
     }
 
-    public function valuesTrue()
+    /**
+     * @return array<int, mixed>
+     */
+    public function valuesTrue(): array
     {
         return Arr::get($this->config, 'values.true');
     }
 
-    public function valuesFalse()
+    /**
+     * @return array<int, mixed>
+     */
+    public function valuesFalse(): array
     {
         return Arr::get($this->config, 'values.false');
     }
 
-    private function valuesMap()
+    /**
+     * @return array<int, array<string, string>>
+     */
+    private function valuesMap(): array
     {
         return Arr::get($this->config, 'values.map');
     }
 
-    private function valuesHuman()
+    /**
+     * @return array<string, array<int, string>>
+     */
+    private function valuesHuman(): array
     {
         return Arr::get($this->config, 'values.human');
     }
 
-    private function allowTypes()
+    /**
+     * @return array<int, string>
+     */
+    private function allowTypes(): array
     {
         return Arr::get($this->config, 'types.allow');
     }
 
-    private function nullAs()
+    private function nullAs(): bool
     {
         return Arr::get($this->config, 'types.null_as');
     }
 
-    private function objectAs()
+    private function objectAs(): bool
     {
         return Arr::get($this->config, 'types.object_as');
     }
 
-    private function objectEmptyAs()
+    private function objectEmptyAs(): bool
     {
         return Arr::get($this->config, 'types.object_empty_as');
     }
 
-    private function arrayAs()
+    private function arrayAs(): bool
     {
         return Arr::get($this->config, 'types.array_as');
     }
 
-    private function arrayEmptyAs()
+    private function arrayEmptyAs(): bool
     {
         return Arr::get($this->config, 'types.array_empty_as');
     }
 
-    private function otherAs()
+    private function otherAs(): mixed
     {
         return Arr::get($this->config, 'types.other_as');
     }
 
-    private function otherAsException()
+    private function otherAsException(): bool
     {
         return Arr::get($this->config, 'types.other_as') === 'exception';
     }

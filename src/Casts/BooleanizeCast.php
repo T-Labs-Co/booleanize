@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -23,17 +25,20 @@
 namespace TLabsCo\Booleanize\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use TLabsCo\Booleanize\Facades\Booleanize;
-use TLabsCo\Booleanize\HasBooleanizeTrait;
+use TLabsCo\Booleanize\Model\HasBooleanizeTrait;
 
+/**
+ * @implements CastsAttributes<mixed, mixed>
+ */
 final class BooleanizeCast implements CastsAttributes
 {
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return bool
+     * @param  Model  $model
      */
-    private function hasUseBooleanizeTrait($model)
+    private function hasUseBooleanizeTrait($model): bool
     {
         return in_array(HasBooleanizeTrait::class, class_uses_recursive(get_class($model)));
     }
@@ -41,15 +46,12 @@ final class BooleanizeCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return bool|string
+     * @param  Model  $model
+     * @param  array<string, mixed>  $attributes
      */
-    public function get($model, $key, $value, $attributes)
+    public function get($model, string $key, mixed $value, array $attributes): mixed
     {
-        if ($this->hasUseBooleanizeTrait($model)) {
+        if ($this->hasUseBooleanizeTrait($model) && method_exists($model, 'getTrueValueAs')) {
             $defaultTrue = Arr::get($model->getTrueValueAs(), $key, Booleanize::defaultTrue());
         } else {
             $defaultTrue = Booleanize::defaultTrue();
@@ -61,15 +63,12 @@ final class BooleanizeCast implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return bool|string
+     * @param  Model  $model
+     * @param  array<string, mixed>  $attributes
      */
-    public function set($model, $key, $value, $attributes)
+    public function set($model, string $key, mixed $value, array $attributes): mixed
     {
-        if ($this->hasUseBooleanizeTrait($model)) {
+        if ($this->hasUseBooleanizeTrait($model) && method_exists($model, 'setTrueValueAs')) {
             $defaultTrue = Arr::get($model->setTrueValueAs(), $key, Booleanize::defaultTrue());
         } else {
             $defaultTrue = Booleanize::defaultTrue();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -23,14 +25,15 @@
 namespace TLabsCo\Booleanize\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use TLabsCo\Booleanize\Facades\Booleanize;
-use TLabsCo\Booleanize\HasBooleanizeTrait;
+use TLabsCo\Booleanize\Model\HasBooleanizeTrait;
 
 final class BooleanizeInboundCast implements CastsInboundAttributes
 {
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  Model  $model
      */
     private function hasUseBooleanize($model): bool
     {
@@ -40,15 +43,12 @@ final class BooleanizeInboundCast implements CastsInboundAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return mixed
+     * @param  Model  $model
+     * @param  array<string, mixed>  $attributes
      */
-    public function set($model, $key, $value, $attributes)
+    public function set($model, string $key, mixed $value, array $attributes): mixed
     {
-        if ($this->hasUseBooleanize($model)) {
+        if ($this->hasUseBooleanize($model) && method_exists($model, 'setTrueValueAs')) {
             $defaultTrue = Arr::get($model->setTrueValueAs(), $key, Booleanize::defaultTrue());
         } else {
             $defaultTrue = Booleanize::defaultTrue();

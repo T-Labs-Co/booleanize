@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -20,37 +22,35 @@
  * file that was distributed with this source code.
  */
 
-namespace TLabsCo\Booleanize;
+namespace TLabsCo\Booleanize\Providers;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use TLabsCo\Booleanize\Commands\BooleanizeCommand;
+use Illuminate\Support\ServiceProvider;
+use TLabsCo\Booleanize\Booleanize;
 
-class BooleanizeServiceProvider extends PackageServiceProvider
+class BooleanizeServiceProvider extends ServiceProvider
 {
-    public function configurePackage(Package $package): void
+    /**
+     * Register any application services.
+     */
+    public function register(): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('booleanize')
-            ->hasConfigFile()
-            ->hasCommand(BooleanizeCommand::class);
-    }
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/booleanize.php',
+            'booleanize'
+        );
 
-    public function packageRegistered()
-    {
         $this->app->singleton('booleanize', function () {
             return new Booleanize;
         });
     }
 
-    public function packageBooted()
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
     {
-        // Override config
-
+        $this->publishes([
+            __DIR__.'/../../config/booleanize.php' => config_path('booleanize.php'),
+        ], 'booleanize-config');
     }
 }

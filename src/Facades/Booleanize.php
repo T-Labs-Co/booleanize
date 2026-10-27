@@ -23,25 +23,28 @@
 namespace TLabsCo\Booleanize\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use TLabsCo\Booleanize\Exceptions\InvalidTypeSupportBooleanizeException;
+use TLabsCo\Booleanize\Exceptions\InvalidValueBooleanizeException;
+use TLabsCo\Booleanize\Exceptions\NotFoundValueBooleanizeException;
 
 /**
- * @method static \TLabsCo\Booleanize\Booleanize withConfig(array $options)
- * @method static string|bool convert($value, $default = null, $trueValue = null)
- * @method static string|bool convertArray($value, $default = null, $trueValue = null)
- * @method static string|bool inverse($value, $default = null, $trueValue = null)
- * @method static bool isValid($value)
- * @method static bool isTrue($value)
- * @method static bool isFalse($value)
- * @method static string human($value)
- * @method static array couple($value)
- * @method static string|bool defaultTrue()
- * @method static string|bool defaultFalse()
+ * @method static \TLabsCo\Booleanize\Booleanize withConfig(array<string, mixed> $options)
+ * @method static mixed convert(mixed $value, mixed $default = null, mixed $trueValue = null)
+ * @method static array<string, mixed> convertArray(array<string, mixed> $values, mixed $default = null, mixed $trueValue = null)
+ * @method static mixed inverse(mixed $value, mixed $default = null, mixed $trueValue = null)
+ * @method static bool isValid(mixed $value)
+ * @method static bool isTrue(mixed $value)
+ * @method static bool isFalse(mixed $value)
+ * @method static string human(mixed $value)
+ * @method static array<int|string, bool|string|int>|null couple(mixed $value)
+ * @method static mixed defaultTrue()
+ * @method static mixed defaultFalse()
  *
  * @see \TLabsCo\Booleanize\Booleanize
  *
- * @thow \TLabsCo\Booleanize\Exceptions\InvalidTypeSupportBooleanizeException
- * @thow \TLabsCo\Booleanize\Exceptions\InvalidValueBooleanizeException
- * @thow \TLabsCo\Booleanize\Exceptions\NotFoundValueBooleanizeException
+ * @throws InvalidTypeSupportBooleanizeException
+ * @throws InvalidValueBooleanizeException
+ * @throws NotFoundValueBooleanizeException
  */
 class Booleanize extends Facade
 {

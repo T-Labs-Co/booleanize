@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -24,6 +26,7 @@ namespace TLabsCo\Booleanize\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 /**
  * Usage:
@@ -39,7 +42,7 @@ class BooleanizeFalseRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -48,17 +51,15 @@ class BooleanizeFalseRule implements ValidationRule
             if (! booleanize()->isValid($value) || ! booleanize()->isFalse($value)) {
                 $fail($this->message());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $fail($this->message());
         }
     }
 
     /**
      * Get the validation error message.
-     *
-     * @return string
      */
-    public function message()
+    public function message(): string
     {
         return 'The :attribute must be a booleanize False value. Maybe: '
             .implode(',', array_unique(booleanize()->valuesFalse()));

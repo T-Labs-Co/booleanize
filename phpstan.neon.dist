@@ -1,16 +1,7 @@
 includes:
-    - phpstan-baseline.neon
+    - vendor/larastan/larastan/extension.neon
 
 parameters:
-    level: 5
     paths:
         - src
-        - config
-        - database
-    tmpDir: build/phpstan
-    checkOctaneCompatibility: true
-    checkModelProperties: true
-    ignoreErrors:
-        - '#Trait [a-zA-Z0-9\\_]+HasBooleanizeTrait is used zero times and is not analysed.#'
-        - '#Call to an undefined method [a-zA-Z0-9\\_]+Model::getTrueValueAs\(\).#'
-        - '#Call to an undefined method [a-zA-Z0-9\\_]+Model::setTrueValueAs\(\).#'
+    level: 8

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is a part of package t-co-labs/booleanize
  *
@@ -20,7 +22,7 @@
  * file that was distributed with this source code.
  */
 
-namespace TLabsCo\Booleanize;
+namespace TLabsCo\Booleanize\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -63,7 +65,7 @@ trait HasBooleanizeTrait
      */
     public function scopeWhereBooleanizeTrue($builder, $field)
     {
-        return self::whereBooleanize($field, true);
+        return $builder->whereBooleanize($field, true);
     }
 
     /**
@@ -73,6 +75,6 @@ trait HasBooleanizeTrait
      */
     public function scopeWhereBooleanizeFalse($builder, $field)
     {
-        return self::whereBooleanize($field, false);
+        return $builder->whereBooleanize($field, false);
     }
 }
